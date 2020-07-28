@@ -2,7 +2,7 @@
 
 Create databases for dev and test
 
-Rename `env` to `.env`, `env.test` to `.env.test` and fix the values.
+Rename `env.dev` to `.env.dev`, `env.test` to `.env.test` and fix the values.
 
 Install dependencies
 
@@ -13,13 +13,7 @@ npm i
 Run development server (with nodemon):
 
 ```
-./node_modules/nodemon/bin/nodemon.js DEBUG=backend_development:* npm start
-```
-
-Run specs:
-
-```
-npm run spec
+npm run watch
 ```
 
 Run migrations:
@@ -31,5 +25,23 @@ npm run migrate up/down
 Export database schema:
 
 ```
-pg_dump --schema-only backend_development > spec/database.sql
+pg_dump --schema-only backend_development > src/spec/database.sql
+```
+
+Run specs:
+
+```
+npm run spec
+```
+
+Run seeds:
+
+```
+npm run seed
+```
+
+Build (will generate js code in ./dist)
+
+```
+npm run build
 ```

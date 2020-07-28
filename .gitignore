@@ -56,6 +56,7 @@ typings/
 
 # dotenv environment variables file
 .env
+.env.dev
 .env.test
 
 # next.js build output
@@ -65,3 +66,5 @@ config/default.json
 config/secrets.json
 
 public
+dist
+src/**/*.js
