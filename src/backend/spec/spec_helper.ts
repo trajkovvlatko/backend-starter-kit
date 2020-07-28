@@ -32,7 +32,10 @@ beforeEach(async () => {
   await clearTables();
 });
 
-export async function authUser(user: {email: string; password: string}) {
+export async function authUser(user: {
+  email: string;
+  password: string;
+}): Promise<string> {
   const url = `/auth/login?email=${user.email}&password=${user.password}`;
   const auth = await chai.request(app).post(url);
   return auth.body.token;

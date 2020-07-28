@@ -1,10 +1,9 @@
 import {Request, Response} from 'express';
 import models from '../models';
-import {parse} from 'querystring';
 const {Performer} = models;
 
 export default class PerformersController {
-  public async index(req: Request, res: Response) {
+  public async index(req: Request, res: Response): Promise<Response> {
     let limit = 10;
     if (typeof req.query.limit === 'string') {
       limit = parseInt(req.query.limit);
@@ -16,16 +15,16 @@ export default class PerformersController {
       where: {active: true},
       order: [['id', 'DESC']],
     });
-    res.send(performers);
+    return res.send(performers);
   }
 
-  public async show(req: Request, res: Response) {
+  public async show(req: Request, res: Response): Promise<Response> {
     const id = parseInt(req.params.id);
     const performer = await Performer.basicFind(id);
     if (performer) {
-      res.send(performer);
+      return res.send(performer);
     } else {
-      res.status(404).send({error: 'Record not found.'});
+      return res.status(404).send({error: 'Record not found.'});
     }
   }
 }

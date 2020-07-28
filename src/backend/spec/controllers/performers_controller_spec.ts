@@ -1,6 +1,7 @@
 import chai, {app} from '../spec_helper';
 import create from '../factories';
 import User from '../../app/models/user_model';
+import Performer from '../../app/models/performer_model';
 
 describe('performers', () => {
   let user: User;
@@ -29,7 +30,7 @@ describe('performers', () => {
       res.body.should.be.an('array');
       res.body.length.should.eq(2);
       res.body
-        .map((p: any) => p.id)
+        .map((p: Performer) => p.id)
         .should.deep.eq([performer2.id, performer1.id]);
       Object.keys(res.body[0])
         .sort()
@@ -50,7 +51,7 @@ describe('performers', () => {
   });
 
   describe('GET /:id', () => {
-    let id: number, performers: any;
+    let id: number, performers: Performer[];
 
     beforeEach(async () => {
       const p1 = await create('performers', {userId: user.id});

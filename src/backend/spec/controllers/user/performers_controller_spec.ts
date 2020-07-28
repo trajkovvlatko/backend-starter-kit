@@ -1,5 +1,6 @@
 import chai, {authUser, app} from '../../spec_helper';
 import create from '../../factories';
+import User from '../../../app/models/user_model';
 
 describe('user/performers', () => {
   context('when user is not signed in', () => {
@@ -77,7 +78,7 @@ describe('user/performers', () => {
   });
 
   context('when user is signed in', () => {
-    let token: string, user: any;
+    let token: string, user: User;
 
     beforeEach(async () => {
       user = await create('users', {});

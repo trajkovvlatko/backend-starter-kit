@@ -17,11 +17,10 @@ interface PerformerAttributes {
   updatedAt: string;
 }
 
-interface PerformerCreationAttributes
-  extends Optional<
-    PerformerAttributes,
-    'id' | 'type' | 'rating' | 'createdAt' | 'updatedAt'
-  > {}
+type PerformerCreationAttributes = Optional<
+  PerformerAttributes,
+  'id' | 'type' | 'rating' | 'createdAt' | 'updatedAt'
+>;
 
 export default class Performer
   extends Model<PerformerAttributes, PerformerCreationAttributes>
@@ -43,9 +42,10 @@ export default class Performer
 
   public readonly performers?: Performer[];
 
-  static associate() {}
-
-  static async basicFind(id: number, userId?: number) {
+  static async basicFind(
+    id: number,
+    userId?: number,
+  ): Promise<Performer | null | {error: string}> {
     const wheres: WhereAttributeHash = {id: id};
     if (userId) {
       wheres.userId = userId;
@@ -68,6 +68,10 @@ export default class Performer
     } catch (e) {
       return {error: e};
     }
+  }
+
+  static associate(): void {
+    return;
   }
 }
 

@@ -11,12 +11,12 @@ async function connect() {
 }
 
 export default class IndexController {
-  public async index(_: Request, res: Response) {
+  public async index(_: Request, res: Response): Promise<Response> {
     try {
       await connect();
-      res.send({success: true});
+      return res.send({success: true});
     } catch (_) {
-      res.status(500).send({error: 'Cannot select from database.'});
+      return res.status(500).send({error: 'Cannot select from database.'});
     }
   }
 }

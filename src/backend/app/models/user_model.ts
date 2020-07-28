@@ -17,8 +17,10 @@ interface UserAttributes {
   updatedAt: string;
 }
 
-interface UserCreationAttributes
-  extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+type UserCreationAttributes = Optional<
+  UserAttributes,
+  'id' | 'createdAt' | 'updatedAt'
+>;
 
 export default class User extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes {
@@ -33,7 +35,10 @@ export default class User extends Model<UserAttributes, UserCreationAttributes>
 
   public readonly performers?: Performer[];
 
-  static async findByCredentials(email: string, password: string) {
+  static async findByCredentials(
+    email: string,
+    password: string,
+  ): Promise<PossibleUser | {error: string}> {
     try {
       // Must return a plain object to passport
       const u: PossibleUser = await User.findOne({
@@ -54,7 +59,11 @@ export default class User extends Model<UserAttributes, UserCreationAttributes>
     }
   }
 
-  static async register(name: string, email: string, password: string) {
+  static async register(
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<User> {
     const hash = await bcrypt.hash(password, saltRounds);
     const user = User.build({
       name,
@@ -65,7 +74,7 @@ export default class User extends Model<UserAttributes, UserCreationAttributes>
     return await user.save();
   }
 
-  static async find(id: number) {
+  static async find(id: number): Promise<PossibleUser | {error: string}> {
     try {
       // Return a user object
       return await User.findByPk(id, {
@@ -76,7 +85,9 @@ export default class User extends Model<UserAttributes, UserCreationAttributes>
     }
   }
 
-  static async findByEmail(email: string) {
+  static async findByEmail(
+    email: string,
+  ): Promise<PossibleUser | {error: string}> {
     try {
       // Return a user object
       return await User.findOne({
@@ -90,7 +101,7 @@ export default class User extends Model<UserAttributes, UserCreationAttributes>
     }
   }
 
-  static associate(models: IModelsList) {
+  static associate(models: IModelsList): void {
     User.hasMany(models.Performer, {foreignKey: 'userId'});
   }
 }

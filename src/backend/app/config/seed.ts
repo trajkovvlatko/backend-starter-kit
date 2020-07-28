@@ -1,6 +1,7 @@
 import db from './database';
 import models from '../models/index';
 import bcrypt from 'bcrypt';
+import IUser from '../interfaces/IUser';
 
 const saltRounds = 10;
 const locations = ['Sweden', 'Denmark', 'Norway'];
@@ -61,18 +62,21 @@ function rand() {
   return Math.round(Math.random() * 1000000);
 }
 
-async function addPerformer(user: any) {
+async function addPerformer(user: IUser) {
   const i = rand();
-  const performer = await user.createPerformer({
-    name: performerNames.pop(),
-    location: randomElement(locations),
-    phone: randomElement(phones),
+
+  const performer = models.Performer.build({
+    userId: user.id,
+    name: randomElement(performerNames).toString(),
+    location: randomElement(locations).toString(),
+    phone: randomElement(phones).toString(),
     email: `email-${i}@performer.com`,
     details: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled. Lorem Ipsum is simply dummy text of the printing typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled`,
     website: `http://performers-website-${i}.com`,
-    rating: randomElement([3, 4, 5]),
+    rating: parseInt(randomElement([3, 4, 5]).toString()),
     active: true,
   });
+  await performer.save();
   return performer;
 }
 
