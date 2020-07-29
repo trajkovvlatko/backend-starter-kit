@@ -8,7 +8,7 @@ if (['up', 'down'].indexOf(direction) === -1) {
 } else {
   const dbUrl = `postgres://${user}:${password}@${host}:${port}/${database}`;
   const migratePath = `ts-node ./node_modules/node-pg-migrate/bin/node-pg-migrate`;
-  const config = '-j ts --migrations-dir ./src/backend/migrations';
+  const config = '-j ts --migrations-dir ./src/migrations';
   const command = `DATABASE_URL=${dbUrl} ${migratePath} ${config} ${direction}`;
   exec(command, (err, stdout) => {
     if (err) {

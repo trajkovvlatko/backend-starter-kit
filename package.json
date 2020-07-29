@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "watch": "nodemon --watch 'src/backend/**/*.ts' --ignore 'src/backend/**/*.spec.ts' --exec 'ts-node' src/backend/server.ts",
+    "watch": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/server.ts",
     "build": "./node_modules/typescript/bin/tsc -p .",
-    "migrate": "./node_modules/ts-node/dist/bin.js ./src/backend/app/config/migrate.ts",
-    "spec": "NODE_ENV=test mocha --require ts-node/register --recursive 'src/backend/spec/**/*_spec.ts' --exit",
-    "seed": "ts-node ./src/backend/app/config/seed.ts",
+    "migrate": "./node_modules/ts-node/dist/bin.js ./src/app/config/migrate.ts",
+    "spec": "NODE_ENV=test mocha --require ts-node/register --recursive 'src/spec/**/*_spec.ts' --exit",
+    "seed": "ts-node ./src/app/config/seed.ts",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
