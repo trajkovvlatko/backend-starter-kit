@@ -4,11 +4,31 @@ import passport from 'passport';
 import models from '../models';
 import IUser from '../models/user_model';
 import {IUnauthenticatedRequestWithCustomBody} from '../interfaces/requests';
+import IError from '../interfaces/IError';
 const {User} = models;
 const secret = process.env.JWT_SECRET;
 
+interface IErrorWithUser {
+  error: string;
+  user: IUser;
+}
+
+interface ISuccessfulLogin {
+  token: string;
+  name: string;
+  email: string;
+}
+
+interface ISuccessfulRegistration {
+  name: string;
+  email: string;
+}
+
 export default class AuthController {
-  public login(req: Request, res: Response): Response | void {
+  public login(
+    req: Request,
+    res: Response<IErrorWithUser | IError | ISuccessfulLogin>,
+  ): Response | void {
     passport.authenticate('local', {session: false}, (err, user, info) => {
       if (err || !user) {
         return res.status(400).json({
@@ -22,7 +42,7 @@ export default class AuthController {
           return res.send({error: 'Missing JWT secret.'});
         }
         if (err) {
-          return res.send(err);
+          return res.send({error: err});
         }
         const token = jwt.sign(user.dataValues, secret);
         return res.json({token, name: user.name, email: user.email});
@@ -32,7 +52,7 @@ export default class AuthController {
 
   public async register(
     req: IUnauthenticatedRequestWithCustomBody<IUser>,
-    res: Response,
+    res: Response<IError | ISuccessfulRegistration>,
   ): Promise<Response> {
     try {
       const {name, email, password} = {...req.body};

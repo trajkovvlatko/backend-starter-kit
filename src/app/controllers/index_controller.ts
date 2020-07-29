@@ -1,5 +1,6 @@
 import {Request, Response} from 'express';
 import sequelize from '../config/database';
+import IError from '../interfaces/IError';
 
 async function connect() {
   try {
@@ -11,7 +12,10 @@ async function connect() {
 }
 
 export default class IndexController {
-  public async index(_: Request, res: Response): Promise<Response> {
+  public async index(
+    _: Request,
+    res: Response<IError | {success: true}>,
+  ): Promise<Response> {
     try {
       await connect();
       return res.send({success: true});
