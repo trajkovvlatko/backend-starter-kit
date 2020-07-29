@@ -54,6 +54,11 @@ export class Router {
       this.authenticate(),
       this.userPerformersController.update,
     );
+    app.delete(
+      '/user/performers/:id',
+      this.authenticate(),
+      this.userPerformersController.delete,
+    );
 
     // catch 404 and forward to error handler
     app.use(function (_req, _res, next) {

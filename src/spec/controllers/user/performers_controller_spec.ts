@@ -1,6 +1,8 @@
 import chai, {authUser, app} from '../../spec_helper';
 import create from '../../factories';
 import User from '../../../app/models/user_model';
+import models from '../../../app/models';
+const {Performer} = models;
 
 describe('user/performers', () => {
   context('when user is not signed in', () => {
@@ -71,6 +73,19 @@ describe('user/performers', () => {
           .post(`/user/performers`)
           .set('content-type', 'application/json')
           .send(options);
+        res.should.have.status(401);
+        res.body.should.deep.eq({});
+      });
+    });
+
+    describe('DELETE /user/performers/:id', () => {
+      it('returns 401', async () => {
+        const id = (
+          await create('performers', {
+            userId: (await create('users', {})).id,
+          })
+        ).id;
+        const res = await chai.request(app).delete(`/user/performers/${id}`);
         res.should.have.status(401);
         res.body.should.deep.eq({});
       });
@@ -285,6 +300,67 @@ describe('user/performers', () => {
         res.should.have.status(200);
         res.body.should.include(options);
         res.body.userId.should.eq(user.id);
+      });
+
+      it('takes user id from token, not from the request params', async () => {
+        const options = {
+          name: 'new name',
+          location: 'new location',
+          email: 'new email',
+          phone: 'new phone',
+          userId: 100,
+        };
+        const res = await chai
+          .request(app)
+          .post(`/user/performers`)
+          .set('content-type', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+          .send(options);
+        res.should.have.status(200);
+        res.body.userId.should.eq(user.id);
+      });
+    });
+
+    describe('DELETE /user/performers/:id', () => {
+      it('fails for performer not found', async () => {
+        const res = await chai
+          .request(app)
+          .delete(`/user/performers/-1`)
+          .set('content-type', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+          .send();
+        res.should.have.status(404);
+        res.body.should.deep.eq({error: 'Performer not found.'});
+      });
+
+      it('fails for performer not owned', async () => {
+        const otherUserId = (await create('users', {})).id;
+        const performer = await create('performers', {userId: otherUserId});
+        const res = await chai
+          .request(app)
+          .delete(`/user/performers/${performer.id}`)
+          .set('content-type', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+          .send();
+        res.should.have.status(404);
+        res.body.should.deep.eq({error: 'Performer not found.'});
+      });
+
+      it('fails for performer not owned', async () => {
+        const performer = await create('performers', {userId: user.id});
+        await create('performers', {userId: user.id});
+        const beforeDelete = await Performer.count();
+        const res = await chai
+          .request(app)
+          .delete(`/user/performers/${performer.id}`)
+          .set('content-type', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+          .send();
+        res.should.have.status(200);
+        res.body.should.deep.eq({success: true, id: performer.id});
+        const afterDelete = await Performer.count();
+        beforeDelete.should.eq(2);
+        afterDelete.should.eq(1);
       });
     });
   });

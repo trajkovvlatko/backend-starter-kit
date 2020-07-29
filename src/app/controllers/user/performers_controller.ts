@@ -85,7 +85,7 @@ export default class UserPerformersController {
     res: Response,
   ): Promise<Response> {
     if (!req.user) {
-      return res.send({err: true});
+      return res.send({error: true});
     }
     try {
       const {name, email, location, phone, details, website, active} = req.body;
@@ -102,6 +102,24 @@ export default class UserPerformersController {
       return res.send(performer);
     } catch (e) {
       return res.status(500).send({error: 'Error creating a performer.'});
+    }
+  }
+
+  public async delete(
+    req: IAuthenticatedShowRequest,
+    res: Response,
+  ): Promise<Response> {
+    try {
+      const id = req.params.id;
+      const performer = await Performer.basicFind(id, req.user.id);
+      if (performer instanceof Performer) {
+        await performer.destroy();
+        return res.send({success: true, id: performer.id});
+      } else {
+        return res.status(404).send({error: 'Performer not found.'});
+      }
+    } catch (e) {
+      return res.status(500).send({error: 'Error while deleting performer.'});
     }
   }
 }
