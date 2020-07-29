@@ -2,8 +2,8 @@ import {Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import models from '../models';
-import IUser from '../interfaces/IUser';
-import IRequestWithCustomBody from '../interfaces/IRequestWithCustomBody';
+import IUser from '../models/user_model';
+import {IUnauthenticatedRequestWithCustomBody} from '../interfaces/requests';
 const {User} = models;
 const secret = process.env.JWT_SECRET;
 
@@ -31,7 +31,7 @@ export default class AuthController {
   }
 
   public async register(
-    req: IRequestWithCustomBody<IUser>,
+    req: IUnauthenticatedRequestWithCustomBody<IUser>,
     res: Response,
   ): Promise<Response> {
     try {

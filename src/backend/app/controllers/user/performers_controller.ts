@@ -1,11 +1,12 @@
 import {Response} from 'express';
+import IPerformer from '../../models/performer_model';
 import models from '../../models';
 import {
   IAuthenticatedRequest,
   IAuthenticatedShowRequest,
   IAuthenticatedUpdateRequest,
   IAuthenticatedCreateRequest,
-} from '../../interfaces/authenticated/IPerformer';
+} from '../../interfaces/requests';
 const {Performer} = models;
 
 export default class UserPerformersController {
@@ -46,7 +47,7 @@ export default class UserPerformersController {
   }
 
   public async update(
-    req: IAuthenticatedUpdateRequest,
+    req: IAuthenticatedUpdateRequest<IPerformer>,
     res: Response,
   ): Promise<Response> {
     try {
@@ -80,7 +81,7 @@ export default class UserPerformersController {
   }
 
   public async create(
-    req: IAuthenticatedCreateRequest,
+    req: IAuthenticatedCreateRequest<IPerformer>,
     res: Response,
   ): Promise<Response> {
     if (!req.user) {

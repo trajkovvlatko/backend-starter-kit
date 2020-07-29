@@ -1,7 +1,7 @@
 import db from './database';
 import models from '../models/index';
 import bcrypt from 'bcrypt';
-import IUser from '../interfaces/IUser';
+import IUser from '../models/user_model';
 
 const saltRounds = 10;
 const locations = ['Sweden', 'Denmark', 'Norway'];
