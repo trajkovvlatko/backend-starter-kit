@@ -1,6 +1,5 @@
 import {host, port, user, password, database} from './get';
 import {exec} from 'child_process';
-
 const direction = process.argv[2];
 
 if (['up', 'down'].indexOf(direction) === -1) {

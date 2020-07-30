@@ -65,7 +65,9 @@ export default class AuthController {
         email: user.get('email'),
       });
     } catch (e) {
-      const errors = e.errors.map((obj: {message: string}) => obj.message);
+      const errors = e.errors
+        .map((obj: {message: string}) => obj.message)
+        .join('\n');
       return res.status(500).send({error: errors});
     }
   }

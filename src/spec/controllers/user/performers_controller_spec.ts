@@ -1,6 +1,6 @@
 import chai, {authUser, app} from '../../spec_helper';
 import create from '../../factories';
-import User from '../../../app/models/user_model';
+import IUser from '../../../app/models/user_model';
 import models from '../../../app/models';
 const {Performer} = models;
 
@@ -93,7 +93,7 @@ describe('user/performers', () => {
   });
 
   context('when user is signed in', () => {
-    let token: string, user: User;
+    let token: string, user: IUser;
 
     beforeEach(async () => {
       user = await create('users', {});
@@ -121,6 +121,10 @@ describe('user/performers', () => {
         // own performers
         const performer1 = await create('performers', {userId: user.id});
         const performer2 = await create('performers', {userId: user.id});
+        const performer3 = await create('performers', {
+          userId: user.id,
+          active: false,
+        });
 
         const res = await chai
           .request(app)
@@ -128,6 +132,12 @@ describe('user/performers', () => {
           .set('Authorization', `Bearer ${token}`);
         res.should.have.status(200);
         res.body.should.deep.eq([
+          {
+            id: performer3.id,
+            name: performer3.name,
+            rating: performer3.rating,
+            type: 'performer',
+          },
           {
             id: performer2.id,
             name: performer2.name,
@@ -148,6 +158,10 @@ describe('user/performers', () => {
       it('returns empty array for no active performers found', async () => {
         // inactive performer
         await create('performers', {userId: user.id, active: false});
+        // performer owned by another user
+        const userId = (await create('users', {})).id;
+        await create('performers', {userId: userId});
+
         const res = await chai
           .request(app)
           .get('/user/performers/active')
@@ -195,7 +209,7 @@ describe('user/performers', () => {
           .get(`/user/performers/-1`)
           .set('Authorization', `Bearer ${token}`);
         res.should.have.status(404);
-        res.body.error.should.eq('Performer not found.');
+        res.body.should.deep.eq({error: 'Performer not found.'});
       });
 
       it('returns 404 for performer not owned by the user', async () => {
@@ -206,7 +220,7 @@ describe('user/performers', () => {
           .get(`/user/performers/${id}`)
           .set('Authorization', `Bearer ${token}`);
         res.should.have.status(404);
-        res.body.error.should.eq('Performer not found.');
+        res.body.should.deep.eq({error: 'Performer not found.'});
       });
 
       it('returns a performer when owned by a user', async () => {
@@ -232,6 +246,18 @@ describe('user/performers', () => {
     });
 
     describe('PATCH /user/performers/:id', () => {
+      it('returns an error for missing performer', async () => {
+        const options = {name: 'new name'};
+        const res = await chai
+          .request(app)
+          .patch(`/user/performers/-1`)
+          .set('content-type', 'application/json')
+          .set('Authorization', `Bearer ${token}`)
+          .send(options);
+        res.should.have.status(404);
+        res.body.should.deep.eq({error: 'Performer not found.'});
+      });
+
       it("doesn't update performer not owned by the user", async () => {
         const userId = (await create('users', {})).id;
         const performer = await create('performers', {userId});
@@ -243,7 +269,7 @@ describe('user/performers', () => {
           .set('Authorization', `Bearer ${token}`)
           .send(options);
         res.should.have.status(404);
-        res.body.error.should.eq('Performer not found.');
+        res.body.should.deep.eq({error: 'Performer not found.'});
       });
 
       it('updates performer data', async () => {
@@ -278,7 +304,7 @@ describe('user/performers', () => {
           .set('Authorization', `Bearer ${token}`)
           .send(options);
         res.should.have.status(500);
-        res.body.error.should.eq('Error creating a performer.');
+        res.body.should.deep.eq({error: 'Error creating a performer.'});
       });
 
       it('creates a new performer', async () => {
@@ -346,7 +372,7 @@ describe('user/performers', () => {
         res.body.should.deep.eq({error: 'Performer not found.'});
       });
 
-      it('fails for performer not owned', async () => {
+      it('deletes a performer and returns the deleted id', async () => {
         const performer = await create('performers', {userId: user.id});
         await create('performers', {userId: user.id});
         const beforeDelete = await Performer.count();

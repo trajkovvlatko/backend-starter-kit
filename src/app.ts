@@ -1,6 +1,6 @@
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import express from 'express';
-import * as path from 'path';
+import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
@@ -27,10 +27,22 @@ export default class App {
     this.app.use(express.urlencoded({extended: false}));
     this.app.use(cookieParser());
     this.app.use(express.static(path.join(__dirname, 'public')));
-    this.app.use(
-      cors({
+
+    const allowedClients = this.allowedClients();
+    if (allowedClients) {
+      this.app.use(cors(allowedClients));
+    } else {
+      this.app.use(cors());
+    }
+  }
+
+  private allowedClients(): {origin: string} | undefined {
+    if (process.env.CLIENT_URL) {
+      return {
         origin: process.env.CLIENT_URL,
-      }),
-    );
+      };
+    } else {
+      return;
+    }
   }
 }

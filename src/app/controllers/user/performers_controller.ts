@@ -1,6 +1,5 @@
 import {Response} from 'express';
 import IPerformer from '../../models/performer_model';
-import models from '../../models';
 import {
   IAuthenticatedRequest,
   IAuthenticatedShowRequest,
@@ -8,7 +7,17 @@ import {
   IAuthenticatedCreateRequest,
 } from '../../interfaces/requests';
 import IError from '../../interfaces/IError';
-const {Performer} = models;
+const attributes = [
+  'id',
+  'name',
+  'email',
+  'location',
+  'phone',
+  'details',
+  'rating',
+  'website',
+  'active',
+];
 
 export default class UserPerformersController {
   public async index(
@@ -16,9 +25,8 @@ export default class UserPerformersController {
     res: Response<IError | IPerformer[]>,
   ): Promise<Response> {
     try {
-      const performers = await Performer.findAll({
+      const performers = await req.user.getPerformers({
         attributes: ['id', 'name', 'rating', 'type'],
-        where: {userId: req.user.id},
         order: [['id', 'DESC']],
       });
       return res.send(performers);
@@ -32,9 +40,9 @@ export default class UserPerformersController {
     res: Response<IError | IPerformer[]>,
   ): Promise<Response> {
     try {
-      const performers = await Performer.findAll({
+      const performers = await req.user.getPerformers({
         attributes: ['id', 'name', 'rating', 'type'],
-        where: {active: true, userId: req.user.id},
+        where: {active: true},
         order: [['id', 'DESC']],
       });
       return res.send(performers);
@@ -47,9 +55,13 @@ export default class UserPerformersController {
     req: IAuthenticatedShowRequest,
     res: Response<IError | IPerformer>,
   ): Promise<Response> {
-    const performer = await Performer.basicFind(req.params.id, req.user.id);
-    if (performer) {
-      return res.send(performer);
+    const results = await req.user.getPerformers({
+      attributes,
+      where: {id: req.params.id},
+      limit: 1,
+    });
+    if (results.length > 0) {
+      return res.send(results[0]);
     } else {
       return res.status(404).send({error: 'Performer not found.'});
     }
@@ -60,8 +72,13 @@ export default class UserPerformersController {
     res: Response<IError | IPerformer>,
   ): Promise<Response> {
     try {
-      const performer = await Performer.basicFind(req.params.id, req.user.id);
-      if (performer instanceof Performer) {
+      const results = await req.user.getPerformers({
+        attributes,
+        where: {id: req.params.id},
+        limit: 1,
+      });
+      const performer = results[0];
+      if (performer) {
         const {
           name,
           email,
@@ -93,12 +110,9 @@ export default class UserPerformersController {
     req: IAuthenticatedCreateRequest<IPerformer>,
     res: Response<IError | IPerformer>,
   ): Promise<Response> {
-    if (!req.user) {
-      return res.send({error: 'Unauthenticated user.'});
-    }
     try {
       const {name, email, location, phone, details, website, active} = req.body;
-      const performer = await Performer.create({
+      const performer = await req.user.createPerformer({
         name,
         email,
         location,
@@ -106,7 +120,6 @@ export default class UserPerformersController {
         details,
         website,
         active,
-        userId: req.user.id,
       });
       return res.send(performer);
     } catch (e) {
@@ -119,9 +132,13 @@ export default class UserPerformersController {
     res: Response<IError | {success: true; id: number}>,
   ): Promise<Response> {
     try {
-      const id = req.params.id;
-      const performer = await Performer.basicFind(id, req.user.id);
-      if (performer instanceof Performer) {
+      const results = await req.user.getPerformers({
+        attributes: ['id'],
+        where: {id: req.params.id},
+        limit: 1,
+      });
+      const performer = results[0];
+      if (performer) {
         await performer.destroy();
         return res.send({success: true, id: performer.id});
       } else {

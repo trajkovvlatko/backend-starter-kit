@@ -1,5 +1,6 @@
-import User from '../app/models/user_model';
-import Performer from '../app/models/performer_model';
+import IUser from '../app/models/user_model';
+import IPerformer from '../app/models/performer_model';
+import models from '../app/models';
 import bcrypt from 'bcrypt';
 const saltRounds = 10;
 
@@ -10,8 +11,8 @@ interface IOptions {
 async function create<T>(
   table: 'performers',
   options: IOptions,
-): Promise<Performer>;
-async function create(table: 'users', options: IOptions): Promise<User>;
+): Promise<IPerformer>;
+async function create(table: 'users', options: IOptions): Promise<IUser>;
 
 async function create(table: string, options: IOptions = {}): Promise<unknown> {
   switch (table) {
@@ -24,10 +25,14 @@ async function create(table: string, options: IOptions = {}): Promise<unknown> {
   }
 }
 
+function rand() {
+  return Math.random().toString(36).substring(7);
+}
+
 async function addUser(options: IOptions) {
   const password = options.password || rand();
   const hash = await bcrypt.hash(password, saltRounds);
-  const user = User.build({
+  const user = models.User.build({
     name: options.name ? options.name.toString() : rand(),
     email: options.email
       ? options.email.toString()
@@ -53,7 +58,7 @@ async function addPerformer(options: IOptions) {
   if (!options.userId) {
     throw 'Invalid user id for performer.';
   }
-  const performer = Performer.build({
+  const performer = models.Performer.build({
     name: options.name ? options.name.toString() : rand(),
     email: options.email ? options.email.toString() : `${rand()}@${rand()}.com`,
     userId: typeof options.userId === 'number' ? options.userId : 0,
@@ -75,10 +80,6 @@ async function addPerformer(options: IOptions) {
   });
   await performer.save();
   return performer;
-}
-
-function rand() {
-  return Math.random().toString(36).substring(7);
 }
 
 export default create;

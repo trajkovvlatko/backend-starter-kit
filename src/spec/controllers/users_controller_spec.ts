@@ -3,7 +3,7 @@ import create from '../factories';
 
 describe('users', () => {
   describe('GET /user/profile', () => {
-    it('returns 401 error for user not signed in', async () => {
+    it('returns 401 error for user is not signed in', async () => {
       await create('users', {});
       const res = await chai.request(app).get('/user/profile');
       res.should.have.status(401);
@@ -11,7 +11,7 @@ describe('users', () => {
       res.body.should.deep.eq({});
     });
 
-    it('returns user profile for signed in user', async () => {
+    it('returns user profile for signed-in user', async () => {
       const user = await create('users', {});
       const email: string = user.email;
       const password: string = user.password;

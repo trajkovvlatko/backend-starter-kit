@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import sequelize from '../config/database';
 import IError from '../interfaces/IError';
 
-async function connect() {
+async function connect(): Promise<void> {
   try {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');

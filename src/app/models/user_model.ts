@@ -1,4 +1,13 @@
-import {DataTypes, Model, Optional} from 'sequelize';
+import {
+  DataTypes,
+  Model,
+  Optional,
+  HasManyGetAssociationsMixin,
+  HasManyAddAssociationMixin,
+  HasManyHasAssociationMixin,
+  HasManyCountAssociationsMixin,
+  HasManyCreateAssociationMixin,
+} from 'sequelize';
 import sequelize from '../config/database';
 import bcrypt from 'bcrypt';
 import IModelsList from '../interfaces/IModelsList';
@@ -34,14 +43,19 @@ export default class User extends Model<UserAttributes, UserCreationAttributes>
   public readonly updatedAt: string;
 
   public readonly performers?: Performer[];
+  public getPerformers!: HasManyGetAssociationsMixin<Performer>;
+  public addPerformer!: HasManyAddAssociationMixin<Performer, number>;
+  public hasPerformer!: HasManyHasAssociationMixin<Performer, number>;
+  public countPerformers!: HasManyCountAssociationsMixin;
+  public createPerformer!: HasManyCreateAssociationMixin<Performer>;
 
   static async findByCredentials(
     email: string,
     password: string,
-  ): Promise<PossibleUser | {error: string}> {
+  ): Promise<User | {error: string}> {
     try {
       // Must return a plain object to passport
-      const u: PossibleUser = await User.findOne({
+      const u = await User.findOne({
         attributes: ['id', 'name', 'email', 'password'],
         where: {
           email: email,

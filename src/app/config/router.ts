@@ -1,6 +1,5 @@
 import {Application} from 'express';
 import passport from 'passport';
-import createError from 'http-errors';
 require('./passport');
 
 import AuthController from '../controllers/auth_controller';
@@ -19,14 +18,18 @@ export class Router {
   public router(app: Application): void {
     app.get('/', this.indexController.index);
 
+    // Authentication
     app.post('/auth/login', this.authController.login);
     app.post('/auth/register', this.authController.register);
 
+    // Performers
     app.get('/performers', this.performersController.index);
     app.get('/performers/:id', this.performersController.show);
 
+    // Profile
     app.get('/user/profile', this.authenticate(), this.usersController.profile);
 
+    // User's performers
     app.get(
       '/user/performers',
       this.authenticate(),
@@ -37,13 +40,11 @@ export class Router {
       this.authenticate(),
       this.userPerformersController.create,
     );
-
     app.get(
       '/user/performers/active',
       this.authenticate(),
       this.userPerformersController.active,
     );
-
     app.get(
       '/user/performers/:id',
       this.authenticate(),
@@ -60,12 +61,12 @@ export class Router {
       this.userPerformersController.delete,
     );
 
-    // catch 404 and forward to error handler
-    app.use(function (_req, _res, next) {
-      next(createError(404));
+    app.use(function (_req, res) {
+      return res.send({error: 'Endpoint not found.'});
     });
   }
 
+  // Trigger before endpoints that require an authenticated user
   private authenticate() {
     return passport.authenticate('jwt', {session: false});
   }

@@ -1,4 +1,4 @@
-import {DataTypes, Model, WhereAttributeHash, Optional} from 'sequelize';
+import {DataTypes, Model, Optional} from 'sequelize';
 import sequelize from '../config/database';
 
 interface PerformerAttributes {
@@ -39,36 +39,6 @@ export default class Performer
   public readonly createdAt: string;
   public readonly updatedAt: string;
   public readonly type: string = 'performer';
-
-  public readonly performers?: Performer[];
-
-  static async basicFind(
-    id: number,
-    userId?: number,
-  ): Promise<Performer | null | {error: string}> {
-    const wheres: WhereAttributeHash = {id: id};
-    if (userId) {
-      wheres.userId = userId;
-    }
-    try {
-      return await Performer.findOne({
-        attributes: [
-          'id',
-          'name',
-          'email',
-          'location',
-          'phone',
-          'details',
-          'rating',
-          'website',
-          'active',
-        ],
-        where: wheres,
-      });
-    } catch (e) {
-      return {error: e};
-    }
-  }
 
   static associate(): void {
     return;

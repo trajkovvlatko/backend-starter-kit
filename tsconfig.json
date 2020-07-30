@@ -11,6 +11,7 @@
     "target": "es6",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "pretty": true,
     "esModuleInterop": true
   },
   "include": ["src/**/*"],
