@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import models from '../models';
-import IUser from '../models/user_model';
+import IUser from '../models/User';
 import {IUnauthenticatedRequestWithCustomBody} from '../interfaces/requests';
 import IError from '../interfaces/IError';
 const {User} = models;

@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import models from '../models';
-import IPerformer from '../models/performer_model';
+import IPerformer from '../models/Performer';
 import IError from '../interfaces/IError';
 import {withMaxLimit, withOffset} from '../helpers/request';
 const {Performer} = models;

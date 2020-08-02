@@ -6,8 +6,9 @@
     "watch": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/server.ts",
     "build": "./node_modules/typescript/bin/tsc -p .",
     "migrate": "./node_modules/ts-node/dist/bin.js ./src/app/config/migrate.ts",
-    "spec": "NODE_ENV=test mocha --require ts-node/register --recursive 'src/spec/**/*_spec.ts' --exit",
+    "spec": "NODE_ENV=test mocha --require ts-node/register --recursive 'src/spec/**/*.spec.ts' --exit",
     "seed": "ts-node ./src/app/config/seed.ts",
+    "start": "node dist/server.js",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {

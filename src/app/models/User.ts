@@ -11,7 +11,7 @@ import {
 import sequelize from '../config/database';
 import bcrypt from 'bcrypt';
 import IModelsList from '../interfaces/IModelsList';
-import Performer from './performer_model';
+import Performer from './Performer';
 const saltRounds = 10;
 
 type PossibleUser = User | null;

@@ -2,11 +2,11 @@ import {Application} from 'express';
 import passport from 'passport';
 require('./passport');
 
-import AuthController from '../controllers/auth_controller';
-import IndexController from '../controllers/index_controller';
-import PerformersController from '../controllers/performers_controller';
-import UserPerformersController from '../controllers/user/performers_controller';
-import UsersController from '../controllers/users_controller';
+import AuthController from '../controllers/AuthController';
+import IndexController from '../controllers/IndexController';
+import PerformersController from '../controllers/PerformersController';
+import UserPerformersController from '../controllers/user/UserPerformersController';
+import UsersController from '../controllers/UsersController';
 
 export class Router {
   public authController: AuthController = new AuthController();

@@ -1,5 +1,5 @@
 import {Request} from 'express';
-import IUser from '../models/user_model';
+import IUser from '../models/User';
 import IDictionary from './IDictionary';
 
 type ParamsDictionary = IDictionary<string>;

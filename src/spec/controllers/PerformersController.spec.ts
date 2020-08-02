@@ -1,7 +1,7 @@
 import chai, {app} from '../spec_helper';
 import create from '../factories';
-import IUser from '../../app/models/user_model';
-import IPerformer from '../../app/models/performer_model';
+import IUser from '../../app/models/User';
+import IPerformer from '../../app/models/Performer';
 
 describe('performers', () => {
   let user: IUser;

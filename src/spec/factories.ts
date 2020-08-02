@@ -1,5 +1,5 @@
-import IUser from '../app/models/user_model';
-import IPerformer from '../app/models/performer_model';
+import IUser from '../app/models/User';
+import IPerformer from '../app/models/Performer';
 import models from '../app/models';
 import bcrypt from 'bcrypt';
 const saltRounds = 10;

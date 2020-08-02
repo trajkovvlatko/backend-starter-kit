@@ -1,6 +1,6 @@
 import chai, {authUser, app} from '../../spec_helper';
 import create from '../../factories';
-import IUser from '../../../app/models/user_model';
+import IUser from '../../../app/models/User';
 import models from '../../../app/models';
 const {Performer} = models;
 

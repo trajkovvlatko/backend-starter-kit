@@ -1,5 +1,5 @@
 import {Response} from 'express';
-import IPerformer from '../../models/performer_model';
+import IPerformer from '../../models/Performer';
 import {
   IAuthenticatedRequest,
   IAuthenticatedShowRequest,

@@ -1,5 +1,5 @@
-import User from './user_model';
-import Performer from './performer_model';
+import User from './User';
+import Performer from './Performer';
 
 function initModels() {
   const models = {
