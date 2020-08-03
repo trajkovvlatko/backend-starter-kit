@@ -19,7 +19,7 @@ npm run watch
 Run migrations:
 
 ```
-npm run migrate up/down
+npm run migrate-dev up/down
 ```
 
 Export database schema:
